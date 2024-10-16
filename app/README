@@ -1,0 +1,38 @@
+Acest webserver se imparte in mai multe parti:
+    Initializare ("__init__"):
+        -configurarea un logging
+        -construirea structurilor de date
+        -initializarea threadpoolului si pornirea threadurilor
+        -creearea directorului '/results'
+
+    Citirea datelor de input ("data_ingestor"):
+        -am creat un Data Frame, folosind biblioteca, pandas in care am pastrat
+        toate datele din fisierul csv
+        -am creat un dictionar cu dictionare cu pozitiile relevante din Data Frame, care este
+        de forma (question : (state : (stratification1 : index DF)))
+
+    ThreadPool ("task_runner"):
+        -functionalitatiile threadpoolului sunt urmatoarele:
+            1.in initializare pe langa datele de input am creat o coada de taskuri(threadsafe),
+            un dictionar pentru taskurile adaugate sa le semnalez ca fiind terminate si un lock 
+            pentru acest dictionar
+            2.functia start porneste toate threadurile
+            3.functia stop semnaleaza threadurile ca trebuie sa se inchida si asteapta oprirea
+            acestora
+            4.functia de add_task care adauga un nou task in coada si dictionarul
+            de taskuri
+        -pentru threaduri am implementat functia run care asteapta un input(folosing metoda get
+        a cozii care nu face busy waiting)
+        -in functie de input acesta va apela functia specifica apiului dorit si calculeaza
+        rezultatul
+        -deschide un fisier nou cu job idul primit unde scrie rezultatul si apoi il adauga si in
+        dictionarul cu taskuri cu cheia idul jobului
+    
+    API ("routes"):
+        -pentru fiecare api care interactioneaza cu threadpoolul am creat o lista ca input pe
+        care am adaugat o in coada de taskuri
+        -pentru get_response am verificat daca job idul este valid si daca da am verificat
+        daca in dictionarul de taskuri se afla ceva la cheia idului caz in care taskul este
+        gata
+
+
